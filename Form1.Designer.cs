@@ -36,6 +36,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label4 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -91,11 +94,11 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("나눔스퀘어", 8.999999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label3.Location = new System.Drawing.Point(804, 656);
+            this.label3.Location = new System.Drawing.Point(732, 657);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(129, 20);
+            this.label3.Size = new System.Drawing.Size(182, 20);
             this.label3.TabIndex = 5;
-            this.label3.Text = "jungwook, shin";
+            this.label3.Text = "2025, jungwook, shin";
             // 
             // progressBar1
             // 
@@ -113,11 +116,45 @@
             this.label4.TabIndex = 7;
             this.label4.Text = "query 진행률";
             // 
+            // button2
+            // 
+            this.button2.Font = new System.Drawing.Font("나눔스퀘어", 8.999999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button2.Location = new System.Drawing.Point(516, 301);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(166, 50);
+            this.button2.TabIndex = 8;
+            this.button2.Text = "Excel file 저장";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Font = new System.Drawing.Font("나눔스퀘어", 8.999999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button3.Location = new System.Drawing.Point(699, 301);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(166, 50);
+            this.button3.TabIndex = 9;
+            this.button3.Text = "CSV 저장";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(25, 642);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(41, 20);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "상태";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 686);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label3);
@@ -144,6 +181,9 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label label5;
     }
 }
 
