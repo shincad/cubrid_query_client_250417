@@ -43,10 +43,18 @@ namespace cubrid_query_client_250417
                     byte[] queryBytes = Encoding.UTF8.GetBytes(query);
                     stream.Write(queryBytes, 0, queryBytes.Length);
 
+                    // 총 크기 수신 (4바이트)
+                    byte[] sizeBuffer = new byte[4];
+                    stream.Read(sizeBuffer, 0, 4);
+                    int totalSize = BitConverter.ToInt32(sizeBuffer, 0);
+
+
                     byte[] buffer = new byte[8192];
                     StringBuilder sb = new StringBuilder();
+                    int bytesReceived = 0;
                     int bytes;
 
+                    /*
                     while ((bytes = stream.Read(buffer, 0, buffer.Length)) > 0)
                     {
                         string part = Encoding.UTF8.GetString(buffer, 0, bytes);
@@ -54,6 +62,30 @@ namespace cubrid_query_client_250417
                         if (part.Contains("<EOF>"))
                             break;
                     }
+                    */
+
+                    // ProgressBar 초기화
+                    progressBar1.Minimum = 0;
+                    progressBar1.Maximum = 100;
+                    progressBar1.Value = 0;
+
+                    while (bytesReceived < totalSize)
+                    {
+                        bytes = stream.Read(buffer, 0, buffer.Length);
+                        if (bytes == 0) break;
+
+                        string part = Encoding.UTF8.GetString(buffer, 0, bytes);
+                        sb.Append(part);
+                        bytesReceived += bytes;
+
+                        // 진행률 계산
+                        int percent = (int)((bytesReceived / (float)totalSize) * 100);
+                        progressBar1.Value = Math.Min(percent, 100);
+                        label4.Text = $"{percent}% ({bytesReceived / 1024} KB / {totalSize / 1024} KB)";
+                        Application.DoEvents();  // UI 업데이트 강제
+                    }
+
+
 
                     // <EOF> 제거
                     string result = sb.ToString().Replace("<EOF>", "");
