@@ -36,6 +36,7 @@ namespace cubrid_query_client_250417
             {
                 // +250421 jwshin ServerPort int로 변환
                 // +250421 jwshin ServerPort int로 변환 test2
+                // +250421 jwshin ServerPort int로 변환 test3
                 using (var client = new TcpClient(ServerIp, int.Parse(ServerPort)))
                 {
                     var stream = client.GetStream();
