@@ -22,7 +22,7 @@ namespace cubrid_query_client_250417
             //Console.OutputEncoding = Encoding.UTF8;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             string query = textBox1.Text;
 
@@ -34,25 +34,40 @@ namespace cubrid_query_client_250417
 
             try
             {
-                // +250421 jwshin ServerPort int로 변환
-                // +250421 jwshin ServerPort int로 변환 test2
-                // +250421 jwshin ServerPort int로 변환 test3
-                using (var client = new TcpClient(ServerIp, int.Parse(ServerPort)))
+                using (var client = new TcpClient())
                 {
+                    await client.ConnectAsync(ServerIp, int.Parse(ServerPort));
                     var stream = client.GetStream();
                     byte[] queryBytes = Encoding.UTF8.GetBytes(query);
-                    stream.Write(queryBytes, 0, queryBytes.Length);
+                    await stream.WriteAsync(queryBytes, 0, queryBytes.Length);
+
+                    // 총 크기 수신 (4바이트)
+                    byte[] sizeBuffer = new byte[4];
+                    await stream.ReadAsync(sizeBuffer, 0, 4);
+                    int totalSize = BitConverter.ToInt32(sizeBuffer, 0);
 
                     byte[] buffer = new byte[8192];
                     StringBuilder sb = new StringBuilder();
-                    int bytes;
+                    int bytesReceived = 0;
 
-                    while ((bytes = stream.Read(buffer, 0, buffer.Length)) > 0)
+                    // ProgressBar 초기화
+                    progressBar1.Minimum = 0;
+                    progressBar1.Maximum = 100;
+                    progressBar1.Value = 0;
+
+                    while (bytesReceived < totalSize)
                     {
+                        int bytes = await stream.ReadAsync(buffer, 0, buffer.Length);
+                        if (bytes == 0) break;
+
                         string part = Encoding.UTF8.GetString(buffer, 0, bytes);
                         sb.Append(part);
-                        if (part.Contains("<EOF>"))
-                            break;
+                        bytesReceived += bytes;
+
+                        // 진행률 갱신
+                        int percent = (int)((bytesReceived / (float)totalSize) * 100);
+                        progressBar1.Value = Math.Min(percent, 100);
+                        label4.Text = $"{percent}% ({bytesReceived / 1024} KB / {totalSize / 1024} KB)";
                     }
 
                     // <EOF> 제거
@@ -65,7 +80,8 @@ namespace cubrid_query_client_250417
                 textBox2.Text = "ERROR: " + ex.Message;
             }
         }
-    
+
+
 
     }
 }
