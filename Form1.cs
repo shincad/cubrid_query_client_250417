@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -81,7 +82,90 @@ namespace cubrid_query_client_250417
             }
         }
 
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Excel 파일|*.xlsx";
+            saveFileDialog.Title = "결과를 Excel로 저장";
 
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string[] lines = textBox2.Text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
+                    await Task.Run(() =>
+                    {
+                        using (var workbook = new ClosedXML.Excel.XLWorkbook())
+                        {
+                            var worksheet = workbook.Worksheets.Add("결과");
+
+                            for (int i = 0; i < lines.Length; i++)
+                            {
+                                // | 기준으로 분리
+                                string[] fields = lines[i].Split('|');
+
+                                for (int j = 0; j < fields.Length; j++)
+                                {
+                                    // 각 셀에 값 채우기 (공백 트림)
+                                    worksheet.Cell(i + 1, j + 1).Value = fields[j].Trim();
+                                }
+                            }
+                            workbook.SaveAs(saveFileDialog.FileName);
+                        }
+                    });
+
+                    MessageBox.Show("Excel 파일로 저장 완료!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("저장 실패: " + ex.Message);
+                }
+            }
+        }
+
+        private async void button3_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "CSV 파일|*.csv";
+            saveFileDialog.Title = "결과를 CSV로 저장";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string[] lines = textBox2.Text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+                    var csvLines = new List<string>();
+
+                    // 헤더 추가
+                    string header = "br,devid,devname,devtype,ipaddr,connport,macaddr,etc";
+                    csvLines.Add(header);
+
+                    foreach (var line in lines)
+                    {
+                        // | 기준으로 분리하고 ,로 조합
+                        string[] fields = line.Split('|');
+                        string csvLine = string.Join(",", fields.Select(f => f.Trim()));
+                        csvLines.Add(csvLine);
+                    }
+
+                    // Use StreamWriter with async support instead of File.WriteAllLinesAsync
+                    using (var writer = new StreamWriter(saveFileDialog.FileName, false, Encoding.UTF8))
+                    {
+                        foreach (var csvLine in csvLines)
+                        {
+                            await writer.WriteLineAsync(csvLine);
+                        }
+                    }
+
+                    MessageBox.Show("CSV 파일로 저장 완료!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("저장 실패: " + ex.Message);
+                }
+            }
+        }
     }
 }
